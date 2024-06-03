@@ -83,7 +83,7 @@ def parse_product_data(product, baseURL):
     material = get_material(body_soup)
     colors = get_data_from_desc(body_html, "Color")
     images = [image["src"] for image in product['images']]
-    print(images)
+    
 
     productData = []
     for variant in product['variants']:
