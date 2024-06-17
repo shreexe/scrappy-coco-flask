@@ -8,6 +8,10 @@
       rel="stylesheet"
       href="{{url_for('static',filename='dist/css/output.css')}}"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
       .loader-container {
         display: none;
@@ -62,12 +66,22 @@
       >
         Scrappy-Coco
       </div>
-      <div class="block justify-center mb-2 text-center">
+      <div
+        class="block justify-center mb-2 text-center"
+        style="margin-bottom: 15px"
+      >
         <p class="font-sans text-gray-400 text-xl font-medium">
           We will help you to generate an excel sheet of products in the given
-          E-commerce link
+          E-commerce link.
         </p>
       </div>
+    </div>
+    <div class="text-center justify-center block">
+      <p class="text-gray-500 text-base font-medium">
+        You just have to provide the URL and submit the form if it's a
+        Shopify-powered website.
+      </p>
+      <p class="text-gray-500 text-base font-medium"> Otherwise, fill in all the fields.</p>
     </div>
 
     <form
@@ -77,17 +91,85 @@
       id="scrappy-form"
     >
       <div class="justify-center items-center mx-auto py-10">
-        <label for="url" class="block mb-2 text-sm font-semibold text-gray-900"
+        <label for="url" class="block text-sm font-bold text-gray-900"
           >URL</label
         >
+        <p
+          class="font-extralight text-sm text-gray-400 mb-7"
+          style="margin-bottom: 3px"
+        >
+          URL of the shop.
+        </p>
+
         <input
           type="url"
           id="url"
           name="url"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          placeholder="https://www.yourwebsite.com"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-5"
+          placeholder="https://www.website.com"
           required
         />
+        <br />
+
+        <label for="shopurl" class="block text-sm font-bold text-gray-900"
+          >Shop URL</label
+        >
+        <p
+          class="font-extralight text-sm text-gray-400 mb-7"
+          style="margin-bottom: 3px"
+        >
+          URL of the shop containg all the products or categories.
+        </p>
+        <input
+          type="shopurl"
+          id="shopurl"
+          name="shopurl"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          placeholder="https://www.website.com/categories/"
+        />
+        <br />
+        <div class="flex flex-row gap-5" style="margin-top: 10px; gap: 20px">
+          <div class="row-span-2">
+            <label
+              for="catlinkelt"
+              class="block span text-sm font-bold text-gray-900 mt-2"
+              >Category Link Element</label
+            >
+            <p
+              class="font-extralight text-sm text-gray-400 mb-7"
+              style="margin-bottom: 3px"
+            >
+              HTML element containg the 'a' tag
+            </p>
+            <input
+              type="text"
+              id="catlinkelt"
+              name="catlinkelt"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="ABC (Optional)"
+            />
+          </div>
+          <div>
+            <label
+              for="catlinkclass"
+              class="block text-sm font-bold text-gray-900 mt-2"
+              >Category Link Class</label
+            >
+            <p
+              class="font-extralight text-sm text-gray-400 mb-7"
+              style="margin-bottom: 3px"
+            >
+              Element's corressponding class
+            </p>
+            <input
+              type="text"
+              id="catlinkclass"
+              name="catlinkclass"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="ABC (Optional)"
+            />
+          </div>
+        </div>
       </div>
       <button
         id="submit"
@@ -100,12 +182,14 @@
         Submit
       </button>
     </form>
+
     <div id="loader-container" class="loader-container">
       <div class="loader"></div>
       <div class="loader-text">
         It will take a while, grab something to eat!!
       </div>
     </div>
+
     <script>
       function showLoader() {
         document.getElementById("loader-container").style.display = "flex";

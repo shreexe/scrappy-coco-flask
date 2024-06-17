@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Categories</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/css/output.css')}}"
+    />
+  </head>
+  <body>
+    <h1>categories</h1>
+    <div
+      class=" justify-center  items-center text-left"
+      style="margin-top: 40px"
+    >
+      {% for productLink in productLinks %} {{ productLink|safe }}
+      <br />
+      {% endfor %}
+    </div>
+  </body>
+</html>

@@ -94,14 +94,14 @@ def parse_product_data(product, baseURL):
             var_name = name + " - " + attribute
         sku = variant['sku'] if variant['sku'] else ""
         model_id = get_model_id(link + sku + attribute, constants.brandCode)
-        download_shopify_images(model_id, images)
+        # download_shopify_images(model_id, images)
 
-        try:
-            var_image = variant['featured_image']['src'] if variant.get('featured_image') else None
-            if var_image:
-                download_images(model_id, [var_image])
-        except:
-            var_image = None
+        # try:
+        #     var_image = variant['featured_image']['src'] if variant.get('featured_image') else None
+        #     if var_image:
+        #         # download_images(model_id, [var_image])
+        # except:
+        #     var_image = None
 
         mrp = sanitize_price(variant["compare_at_price"])
         discounted_price = sanitize_price(variant["price"])

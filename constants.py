@@ -11,11 +11,15 @@ material_array = ["Material Content: ", "Material Content:", "Primary Material: 
 
 
 
-brandCode='DUPE'
-brandName='Narah'
+brandCode='NAH'
+
+brandName='NARAH'
+
 brandDataDir = f'data/{brandCode}/'
 brandOutputDir = f'output/{brandCode}/'
 productDataFile = f'{brandDataDir}PXM_{brandCode}_products.json'
 outputFile = f'{brandOutputDir}PXM_{brandCode}_products.xlsx'
 imagesFolder = f'{brandOutputDir}images/'
+
 categoryLinksFolder = f'{brandDataDir}categories/'
+categoryLinksFile = f'{brandDataDir}PXM_{brandCode}_category_links.json'
