@@ -1,20 +1,20 @@
 
 import json
 import os
-import random
-import string
 from bs4 import BeautifulSoup
-from flask import Flask, render_template, request, send_file, render_template_string
+from flask import Flask, render_template, request, send_file, render_template_string, g
 import pandas as pd
 import requests
-
+from category_data import get_category_links
 import constants
-
 from get_shopify_data import process_products
+from product_data import get_product_data
+from product_links import get_product_links
 
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
 invalid_url_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -31,55 +31,6 @@ invalid_url_template = """
 </body>
 </html>
 """
-# def generate_name():
-#    return ''.join(random.choices(string.ascii_uppercase +
-#                              string.digits, k=4))
-
-# def update_constants(brand_code,brand_name):
-#      with open('constants.py', 'w') as f:
-#         f.write(f"brandCode='{brand_code}'\n")
-#         f.write(f"brandName='{brand_name}'\n")
-#         f.write(f"brandDataDir=f'data/{{brandCode}}/'\n")
-#         f.write(f"brandOutputDir=f'output/{{brandCode}}/'\n")
-#         f.write(f"productDataFile=f'{{brandDataDir}}PXM_{{brandCode}}_products.json'\n")
-#         f.write(f"outputFile=f'{{brandOutputDir}}PXM_{{brandCode}}_products.xlsx'\n")
-#         f.write(f"imagesFolder=f'{{brandOutputDir}}images/'\n")
-#         f.write(f"categoryLinksFolder=f'{{brandDataDir}}categories/'\n")
-
-
-def get_categories(link, categoryLinkElt, categoryLinkClass):
-    print("inside get category", link)
-
-    categoryLinks = []
-    response = requests.get(link, headers=constants.headers).text
-    soup = BeautifulSoup(response, 'html.parser')
-    categories = soup.find_all(categoryLinkElt, {
-                               "class": categoryLinkClass})
-
-    for i, category in enumerate(categories):
-        categoryLink = category.find("a").get("href")
-        if categoryLink not in categoryLinks:
-
-            categoryLinks.append(categoryLink)
-
-    with open(constants.categoryLinksFile, 'w') as file:
-        json.dump(categoryLinks, file)
-    print(categoryLinks)
-
-    return categoryLinks
-
-
-def get_category_links(getCategoriesURL, categoryLinkElt, categoryLinkClass):
-    print("inside get category links")
-    # if os.path.isfile(constants.categoryLinksFile):
-    #     with open(constants.categoryLinksFile, 'r') as j:
-    #         categoryLinks = json.load(j)
-    # else:
-
-    categoryLinks = get_categories(
-        getCategoriesURL, categoryLinkElt, categoryLinkClass)
-
-    return categoryLinks
 
 
 @app.route('/')
@@ -89,6 +40,10 @@ def home():
 
 @app.route('/main', methods=['POST'])
 def main():
+
+    productGridClass = 'product'
+    productGridElt = "li"
+
     baseurl = request.form.get('url')
     print("got url", baseurl)
 
@@ -96,31 +51,31 @@ def main():
     print(getCategoriesURL, "shopurl")
 
     categoryLinkElt = request.form.get('catlinkelt')
-    print(categoryLinkElt,"element")
+    print(categoryLinkElt, "element")
 
     categoryLinkClass = request.form.get('catlinkclass')
     print(categoryLinkClass, "class")
 
-    # json_url = f"{baseurl}/products.json?limit=250&page=1"
-    # response = requests.get(json_url)
+    json_url = f"{baseurl}/products.json?limit=250&page=1"
+    response = requests.get(json_url)
 
-    # if response.status_code == 200:
+    if response.status_code == 200:
 
-    #     products = process_products(baseurl)
+        products = process_products(baseurl)
+        df = pd.DataFrame(products)
+        df = df.sort_values(by=['Name'])
+        df.to_excel(constants.outputFile, index=False)
+        table_html = df.head(10).to_html(classes='data', header="true")
+        return render_template('result.html', tables=[table_html])
 
-    # else:
-    print("inside else")
-    productLinks = get_category_links(
-        getCategoriesURL, categoryLinkElt, categoryLinkClass)
-    print(productLinks)
+    else:
+        print(getCategoriesURL, "----SHOP URL--------")
 
-    return render_template('categories.html', productLinks=productLinks)
+        productLinks = get_product_links(
+            productGridClass, productGridElt, getCategoriesURL, categoryLinkElt, categoryLinkClass)
+        print(productLinks, "the productsssss")
 
-    # df = pd.DataFrame(products)
-    # df = df.sort_values(by=['Name'])
-    # df.to_excel(constants.outputFile, index=False)
-    # table_html = df.head(10).to_html(classes='data', header="true")
-    # return render_template('result.html', tables=[table_html])
+        return render_template('categories.html', productLinks=productLinks)
 
 
 @app.route('/download')

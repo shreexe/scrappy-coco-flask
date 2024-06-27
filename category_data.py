@@ -30,6 +30,7 @@ def get_categories(link, categoryLinkElt, categoryLinkClass):
 
 
 def get_category_links(getCategoriesURL, categoryLinkElt, categoryLinkClass):
+    print("SHOP URL FROM GET_CATEGORY ELEMENTS--------",getCategoriesURL)
     if os.path.isfile(constants.categoryLinksFile):
         with open(constants.categoryLinksFile, 'r') as j:
             categoryLinks = json.load(j)
@@ -41,4 +42,4 @@ def get_category_links(getCategoriesURL, categoryLinkElt, categoryLinkClass):
     return categoryLinks
 
 
-get_category_links()
+

@@ -7,13 +7,13 @@ from product_image_data import download_images, download_shopify_images
 import constants
 
 
-
 def get_dimensions(soup):
     search_str = "Dimension"
     dimension_array = constants.dimension_array
     multi_search = "Dimension|Length|Depth|Height|Width|Size|Measurement"
 
-    dimension_data = get_data_from_desc(soup, multi_search, dimension_array, showLabel=True)
+    dimension_data = get_data_from_desc(
+        soup, multi_search, dimension_array, showLabel=True)
     processed_dim = process_dimensions(dimension_data)
     dimension_matches = check_dimensions_regex(processed_dim)
 
@@ -45,6 +45,7 @@ def process_products(baseurl):
         productList += productData
 
     return productList
+
 
 def get_products(baseURL):
     print("inside get_products")
@@ -83,7 +84,6 @@ def parse_product_data(product, baseURL):
     material = get_material(body_soup)
     colors = get_data_from_desc(body_html, "Color")
     images = [image["src"] for image in product['images']]
-    
 
     productData = []
     for variant in product['variants']:
@@ -94,14 +94,15 @@ def parse_product_data(product, baseURL):
             var_name = name + " - " + attribute
         sku = variant['sku'] if variant['sku'] else ""
         model_id = get_model_id(link + sku + attribute, constants.brandCode)
-        # download_shopify_images(model_id, images)
+        download_shopify_images(model_id, images)
 
-        # try:
-        #     var_image = variant['featured_image']['src'] if variant.get('featured_image') else None
-        #     if var_image:
-        #         # download_images(model_id, [var_image])
-        # except:
-        #     var_image = None
+        try:
+            var_image = variant['featured_image']['src'] if variant.get(
+                'featured_image') else None
+            if var_image:
+                download_images(model_id, [var_image])
+        except:
+            var_image = None
 
         mrp = sanitize_price(variant["compare_at_price"])
         discounted_price = sanitize_price(variant["price"])
@@ -114,7 +115,6 @@ def parse_product_data(product, baseURL):
         productData.append(variantData)
 
     return productData
-
 
 
 def get_material(soup):
